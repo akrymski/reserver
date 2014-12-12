@@ -22,6 +22,10 @@ This way any modules that your lib requires, such as LESS, Browserify, EJS, etc 
 
 ## Setup
 
+```bash
+$ sudo npm install -g reserver
+```
+
 This is a build-tool-by-convention.  It assumes the following directory structure:
 
 ```
