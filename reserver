@@ -18,17 +18,16 @@ var program = require('commander');
 
 program
   .version('0.0.1')
-  .usage('[options] www-directory')
+  .usage('[options] ./src ./www')
   .option('-p, --port [int]', 'Port', 3000)
-  .option('-s, --src [dir]', 'Source directory')
   .parse(process.argv);
 
 if (program.args.length < 1) return program.help();
 
-var DIR     = path.join(path.dirname(fs.realpathSync(__filename)), '../');
+var DIR     = path.join(path.dirname(fs.realpathSync(__filename)), './');
 var PORT    = program.port || 3000;
-var SRC     = program.src ? fs.realpathSync(program.src) : DIR + 'src';
-var DEST    = fs.realpathSync(program.args[0]);
+var SRC     = fs.realpathSync(program.args[0]);
+var DEST    = fs.realpathSync(program.args[1]);
 
 var CONFIG  = {
   '/html' : DEST + '/index.html',

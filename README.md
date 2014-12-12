@@ -42,7 +42,7 @@ Your HTML in `index.ejs` should include the following JavaScript and CSS files:
 Now you can run reserver as follows:
 
 ```bash
-$ reserver ./www --port=3000 --src=./src
+$ reserver ./src ./www --port=3000
 ```
 
 Any static files will be served from the `www` directory.
