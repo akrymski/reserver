@@ -5,7 +5,6 @@ A tiny dev server that rebuilds your single-page app.
 
 ## Features
 
-- Runs a dev server on port 3000 serving /www
 - Rebuilds the project in memory when you refresh the browser
 - Displays compilation errors in the browser
 - Logs console.log output from your web-app to the terminal
