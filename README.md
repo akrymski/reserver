@@ -26,8 +26,8 @@ This way any modules that your lib requires, such as LESS, Browserify, EJS, etc 
 This is a build-tool-by-convention.  It assumes the following directory structure:
 
 ```
-/src/js/index.js 	-> entry point to your app which will be [browserified](http://browserify.org) into a bundle
-/src/css/index.less -> [LESS](http://lesscss.org) CSS styles to bundle
+/src/js/index.js 	-> entry point to your app which will be browserified into a bundle
+/src/css/index.less -> LESS CSS styles to bundle
 /src/html/index.ejs -> HTML file to bundle
 ```
 
