@@ -1,0 +1,135 @@
+#!/usr/bin/env node
+
+/*
+  
+Dev Server:
+
+- Runs a dev server on port 3000 serving /www
+- Rebuilds the project on refresh
+- Displays compilation errors in the browser
+- Logs console.log output to the terminal
+
+*/
+
+var path    = require('path');
+var fs      = require('fs');
+var express = require('express');
+var program = require('commander');
+
+program
+  .version('0.0.1')
+  .usage('[options] www-directory')
+  .option('-p, --port [int]', 'Port', 3000)
+  .option('-s, --src [dir]', 'Source directory')
+  .parse(process.argv);
+
+if (program.args.length < 1) return program.help();
+
+var DIR     = path.join(path.dirname(fs.realpathSync(__filename)), '../');
+var PORT    = program.port || 3000;
+var SRC     = program.src ? fs.realpathSync(program.src) : DIR + 'src';
+var DEST    = fs.realpathSync(program.args[0]);
+
+var CONFIG  = {
+  '/html' : DEST + '/index.html',
+  '/css' : DEST + '/index.css',
+  '/js' : DEST + '/index.js'
+}
+
+var LOGGER = ";var __log = console.log;console.log = function() {__log.apply(this, arguments);var xhr = new XMLHttpRequest();xhr.open('POST', '/__log?v=' + encodeURIComponent(JSON.stringify([].map.call(arguments,function(v){return v && v.tagName ? v.tagName:v}))));xhr.send(null);};"
+
+var builders = {
+  html: function(f, fn) {
+    fn(null, fs.readFileSync(f).toString());
+  },
+  js: function(f, fn) {
+    require('browserify')({
+      entries: f,
+      debug: true
+    }).bundle(fn);
+  },
+  less: function(f, fn) {
+    require('less').render(fs.readFileSync(f).toString(), {
+      filename: 'index.less',
+      paths: [path.dirname(f)],
+      compress: true
+    }, function (err, res) {
+      if (err) fn(err);
+      else fn(null, res.css);
+    });
+  },
+  ejs: function(f, fn) {
+    try {
+      var html = require('ejs').render(fs.readFileSync(f).toString());
+      fn(null, html);
+    } catch (err) {
+      fn(err);
+    }
+  }
+}
+
+function built(src, dest, fn, err, res) {
+  if (err) {
+    fn(err);
+  } else {
+    //fs.writeFileSync(dest, res);
+    fn(null, res);
+  }
+}
+
+function build(src, dest, fn) {
+  for (var ext in builders) {
+    var f = src + '/index.' + ext;
+    if (fs.existsSync(f)) {
+      builders[ext].call(this, f, fn);
+    }
+  }
+}
+
+var app = express();
+var files = { js: '', css: '' }
+
+function sendError(err, res) {
+  res.send('<html><body><pre>'+err+'</pre></body>');
+}
+
+app.get('/', function (req, res) {
+  var err;
+  build(SRC + '/css', CONFIG['/css'], function(err, r) {
+    if (err) return sendError(err, res);
+    files.css = r;
+    build(SRC + '/js', CONFIG['/js'], function(err, r) {
+      if (err) return sendError(err, res);
+      files.js = r;
+      build(SRC + '/html', CONFIG['/html'], function(err, r) {
+        if (err) return sendError(err, res);
+        res.send(r);
+      })
+    })
+  })
+});
+
+app.get('/index.js', function(req, res) {
+  res.set('Content-Type', 'text/javascript').end(LOGGER + files.js);
+});
+
+app.get('/index.css', function(req, res) {
+  res.set('Content-Type', 'text/css').end(files.css);
+});
+
+app.post('/__log', function(req, res) {
+  var time = (new Date()).toTimeString().substring(0,9);
+  console.log(time + req.query.v);
+  res.send('');
+});
+
+app.use(express.static(DEST));
+
+app.listen(PORT, function() {
+  console.log('Building from ' + SRC);
+  console.log('Serving static files from ' + DEST);
+  console.log('Listening on port ' + PORT);
+});
+
+
+
