@@ -1,7 +1,7 @@
 reserver
 ========
 
-A tiny dev server that rebuilds your single-page app.
+A tiny dev server that rebuilds your single-page app when you refresh your browser.
 
 ## Why not Grunt/Gulp/etc
 
@@ -19,9 +19,9 @@ A tiny dev server that rebuilds your single-page app.
 Reserver is a built-tool-by-convention.  Instead of writing config files, it expects your app to have the following structure:
 
 ```
-/html/index.ext -> compiled to index.html
-/js/index.ext   -> compiled to index.js
-/css/index.ext  -> compiled to index.css
+/html/index.ext -> compiled to /index.html
+/js/index.ext   -> compiled to /index.js
+/css/index.ext  -> compiled to /index.css
 ```
 
 Inside each directory there needs to be a file called `index` with it's appropriate _extension_.  Based on the extension, reserver will compile the index file as necessary.  For example if you have `/css/index.less` then `less` will be used to compile your CSS.
@@ -38,6 +38,15 @@ index.coffee -> compiled with coffeeify
 index.js     -> compiled with browserify
 ```
 
+Your `index.html` should include the compiled JS & CSS as follows:
+
+```html
+<head>
+  <link rel="stylesheet" href="index.css" type="text/css" media="screen" />
+  <script type="text/javascript" src="index.js"></script>
+</head>
+```
+
 ## Usage
 
 Install:
@@ -47,20 +56,20 @@ $ sudo npm install -g browserify
 $ sudo npm install -g reserver
 ```
 
-Run reserver on port `8080` looking for html/js/css folders in `/src` and serving static files from `/www`:
+Run reserver on port `8080` looking for html/js/css folders in `src` and serving static files from `www`:
 
 ```bash
 $ reserver ./src ./www --port 8080
 ```
 
-Open up your browser and visit `localhost:8080`.  Change files in `/src`, refresh and your app gets rebuilt in the background.
+Open up your browser and visit `localhost:8080`.  Change files in `/src`, refresh your browser and your app gets re-compiled in the background.
 
 
 ## Requirements
 
-The build system requires that any necessary build modules are installed globally.
+The build system requires that any necessary build modules are installed globally or locally to `node_modules`.
 
-For example if you're using [LESS CSS](http://lesscss.org), make sure you've installed the module globally in your machine.
+For example if you're using [LESS CSS](http://lesscss.org), make sure you've installed the module globally on your machine.
 
 For node to find your global modules, make sure NODE_PATH is set correctly:
 
