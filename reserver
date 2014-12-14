@@ -41,6 +41,13 @@ var builders = {
   html: function(f, fn) {
     fn(null, fs.readFileSync(f).toString());
   },
+  coffee: function(f, fn) {
+    var coffeeify = require('coffeeify');
+    require('browserify')({
+      entries: f,
+      debug: true
+    }).transform(coffeeify).deps({transform: [coffeeify]}).bundle(fn);
+  },
   js: function(f, fn) {
     require('browserify')({
       entries: f,
@@ -57,6 +64,16 @@ var builders = {
       else fn(null, res.css);
     });
   },
+  styl: function(f, fn) {
+    require('stylus').render(fs.readFileSync(f).toString(), {
+      filename: 'index.less',
+      paths: [path.dirname(f)],
+      compress: true
+    }, function (err, res) {
+      if (err) fn(err);
+      else fn(null, res);
+    });
+  },
   ejs: function(f, fn) {
     try {
       var html = require('ejs').render(fs.readFileSync(f).toString());
@@ -64,15 +81,6 @@ var builders = {
     } catch (err) {
       fn(err);
     }
-  }
-}
-
-function built(src, dest, fn, err, res) {
-  if (err) {
-    fn(err);
-  } else {
-    //fs.writeFileSync(dest, res);
-    fn(null, res);
   }
 }
 

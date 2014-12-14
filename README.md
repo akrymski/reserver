@@ -3,50 +3,71 @@ reserver
 
 A tiny dev server that rebuilds your single-page app.
 
-## Features
+## Why not Grunt/Gulp/etc
 
-- Rebuilds the project in memory when you refresh the browser
-- Displays compilation errors in the browser
-- Logs console.log output from your web-app to the terminal
+- I don't like writing config files
+- I don't like installing plugins that wrap existing modules (eg gulp-browserify)
+- I don't want live-reload refreshing my browser in the background
+- I don't want temporary build/debug files to hang around in my server `/www` directory
+- I want compilation errors displayed in the browser
+- I want my CSS compiled from Less or Stylus
+- I want my JavaScript or CoffeeScript browserified
+- I want my app's console.log output to show up in the terminal
+
+## Conventions
+
+Reserver is a build-tool-by-convention.  Instead of writing config files, it expects your app to have the following structure:
+
+```
+/html/index.[ext] -> compiled to index.html
+/js/index.[ext]   -> compiled to index.js
+/css/index.[ext]  -> compiled to index.css
+```
+
+Inside each directory there needs to be a file called `index` with it's appropriate extension.  Based on the extension, reserver will compile the index file as necessary.  For example if you have `/css/index.less` then `less` will be used to compile your CSS.
+
+Supported extensions are:
+
+```
+index.less   -> compiled with Less CSS
+index.styl   -> compiled with Stylus
+index.ejs    -> compiled with EJS
+index.coffee -> compiled with coffeeify
+index.js     -> compiled with browserify
+index.html   -> no compilation necessary
+```
+
+## Usage
+
+Install:
+
+```bash
+$ sudo npm install -g browserify
+$ sudo npm install -g reserver
+```
+
+Run reserver on port `8080` looking for html/js/css folders in `/src` and serving static files from `/www`:
+
+```bash
+$ reserver ./src ./www --port 8080
+```
+
+Open up your browser and visit `localhost:8080`.  Change files in `/src`, refresh and your app gets rebuilt in the background.
+
 
 ## Requirements
 
-The build tool requires that any necessary build modules are installed globally.  
-If you're getting compilations, make sure NODE_PATH is set to look for global modules as well:
+The build system requires that any necessary build modules are installed globally.
+
+For example if you're using [LESS CSS](http://lesscss.org), make sure you've installed the module globally in your machine.
+
+For node to find your global modules, make sure NODE_PATH is set correctly:
 
 ```bash
 $ export NODE_PATH=/usr/local/lib/node_modules
 ```
 
-This way any modules that your lib requires, such as LESS, Browserify, EJS, etc don't have to be installed yet again.
-
-## Setup
-
-This is a build-tool-by-convention.  It assumes the following directory structure:
-
-```
-/src/js/index.js 	-> entry point to your app which will be browserified into a bundle
-/src/css/index.less -> LESS CSS styles to bundle
-/src/html/index.ejs -> HTML file to bundle
-```
-
-On refresh your app is rebuilt in memory, no files are saved to disk.
-Your HTML in `index.ejs` should include the following JavaScript and CSS files:
-
-```
-/index.js 	-> contains the JS for your app
-/index.css  -> contains the CSS for your app
-```
-
-Now you can run reserver as follows:
-
-```bash
-$ reserver ./src ./www --port=3000
-```
-
-Any static files will be served from the `www` directory.
 
 ## To Do
 
-- Add support for stylus
-- Add support for Coffee-Script
+- Add support for Type-Script
