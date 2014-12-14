@@ -16,15 +16,15 @@ A tiny dev server that rebuilds your single-page app.
 
 ## Conventions
 
-Reserver is a build-tool-by-convention.  Instead of writing config files, it expects your app to have the following structure:
+Reserver is a built-tool-by-convention.  Instead of writing config files, it expects your app to have the following structure:
 
 ```
-/html/index.[ext] -> compiled to index.html
-/js/index.[ext]   -> compiled to index.js
-/css/index.[ext]  -> compiled to index.css
+/html/index.ext -> compiled to index.html
+/js/index.ext   -> compiled to index.js
+/css/index.ext  -> compiled to index.css
 ```
 
-Inside each directory there needs to be a file called `index` with it's appropriate extension.  Based on the extension, reserver will compile the index file as necessary.  For example if you have `/css/index.less` then `less` will be used to compile your CSS.
+Inside each directory there needs to be a file called `index` with it's appropriate _extension_.  Based on the extension, reserver will compile the index file as necessary.  For example if you have `/css/index.less` then `less` will be used to compile your CSS.
 
 Supported extensions are:
 
@@ -32,9 +32,10 @@ Supported extensions are:
 index.less   -> compiled with Less CSS
 index.styl   -> compiled with Stylus
 index.ejs    -> compiled with EJS
+index.jade   -> compiled with Jade
+index.hb     -> compiled with Handlebars
 index.coffee -> compiled with coffeeify
 index.js     -> compiled with browserify
-index.html   -> no compilation necessary
 ```
 
 ## Usage

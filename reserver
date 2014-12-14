@@ -38,9 +38,6 @@ var CONFIG  = {
 var LOGGER = ";var __log = console.log;console.log = function() {__log.apply(this, arguments);var xhr = new XMLHttpRequest();xhr.open('POST', '/__log?v=' + encodeURIComponent(JSON.stringify([].map.call(arguments,function(v){return v && v.tagName ? v.tagName:v}))));xhr.send(null);};"
 
 var builders = {
-  html: function(f, fn) {
-    fn(null, fs.readFileSync(f).toString());
-  },
   coffee: function(f, fn) {
     var coffeeify = require('coffeeify');
     require('browserify')({
@@ -81,6 +78,28 @@ var builders = {
     } catch (err) {
       fn(err);
     }
+  },
+  jade: function(f, fn) {
+    try {
+      var html = require('jade').render(fs.readFileSync(f).toString());
+      fn(null, html);
+    } catch (err) {
+      fn(err);
+    }
+  },
+  hb: function(f, fn) {
+    try {
+      var html = require('handlebars').compile(fs.readFileSync(f).toString())({});
+      fn(null, html);
+    } catch (err) {
+      fn(err);
+    }
+  },
+  html: function(f, fn) {
+    fn(null, fs.readFileSync(f).toString());
+  },
+  css: function(f, fn) {
+    fn(null, fs.readFileSync(f).toString());
   }
 }
 
