@@ -22,7 +22,6 @@ var http    = require('http');
 var send    = require('send');
 var url     = require('url');
 
-
 program
   .version('0.0.1')
   .usage('[options] ./src ./www')
@@ -136,6 +135,9 @@ var src;
 
 http.createServer(function(req, res) {
 
+  var time = Date.now();
+  var timeString = (new Date()).toTimeString().substring(0,9);
+
   if (req.url === "/index.js") {
     res.writeHead(200, { "Content-Type": "text/javascript" });
     res.end(LOGGER + src.js);
@@ -143,9 +145,8 @@ http.createServer(function(req, res) {
     res.writeHead(200, { "Content-Type": "text/css" });
     res.end(src.css);
   } else if (req.url === "/__log") {
-    var time = (new Date()).toTimeString().substring(0,9);
     req.on('data', function (chunk) {
-      console.log(time + chunk);
+      console.log(timeString + chunk);
     });
     res.writeHead(200, { "Content-Type": "text/plain" });
     res.end('');
@@ -167,6 +168,7 @@ http.createServer(function(req, res) {
       buildAll(function(err, all) {
         if (err) return res.end('<html><body><pre>'+err+'</pre></body>');
         src = all;
+        console.log(timeString + 'Built in ' + (Date.now()-time) + 'ms');
         res.end(src.html);
       });
     }
