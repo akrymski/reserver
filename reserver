@@ -21,6 +21,7 @@ var program = require('commander');
 var http    = require('http');
 var send    = require('send');
 var url     = require('url');
+var async   = require('async');
 
 program
   .version('0.0.1')
@@ -109,26 +110,12 @@ var builders = {
   }
 }
 
-function build(src, x, fn) {
+function build(dir, fn) {
   for (var ext in builders) {
-    var f = src + '/index.' + ext;
-    if (fs.existsSync(f)) {
-      builders[ext].call(this, f, fn);
-    }
+    var f = SRC + dir + '/index.' + ext;
+    if (fs.existsSync(f)) return builders[ext].call(this, f, fn);
   }
-}
-
-function buildAll(fn) {
-  build(SRC + '/css', CONFIG['/css'], function(err, css) {
-    if (err) return fn(err);
-    build(SRC + '/js', CONFIG['/js'], function(err, js) {
-      if (err) return fn(err);
-      build(SRC + '/html', CONFIG['/html'], function(err, html) {
-        if (err) return fn(err);
-        fn(err, { html: html, js: js, css: css });
-      })
-    })
-  })
+  fn('No valid index file found in ' + dir);
 }
 
 var src;
@@ -165,10 +152,13 @@ http.createServer(function(req, res) {
 
     if (req.method === 'GET') {
       res.writeHead(200, { "Content-Type": "text/html" });
-      buildAll(function(err, all) {
-        if (err) return res.end('<html><body><pre>'+err+'</pre></body>');
-        src = all;
-        console.log(timeString + 'Built in ' + (Date.now()-time) + 'ms');
+      async.map(['/css', '/js', '/html'], build, function(err, results) {
+        if (err) {
+          console.log(timeString + 'BUILD ERROR: err');
+          return res.end('<html><body><pre>'+err+'</pre></body>');
+        }
+        console.log(timeString + 'BUILT IN ' + (Date.now()-time) + 'ms');
+        src = { css: results[0], js: results[1], html: results[2] };
         res.end(src.html);
       });
     }

@@ -1,6 +1,6 @@
 {
   "name": "reserver",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A tiny dev server that rebuilds your static web app",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,7 +10,7 @@
     "url": "https://github.com/akrymski/reserver.git"
   },
   "bin": {
-    "reserver" : "./reserver"
+    "reserver": "./reserver"
   },
   "keywords": [
     "dev",
@@ -25,6 +25,7 @@
     "url": "https://github.com/akrymski/reserver/issues"
   },
   "dependencies": {
+    "async": "^0.9.0",
     "commander": "latest",
     "send": "latest"
   },
