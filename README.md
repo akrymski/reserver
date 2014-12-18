@@ -1,7 +1,7 @@
 reserver
 ========
 
-A tiny dev server that rebuilds your single-page app when you refresh your browser.
+A tiny dev server that rebuilds your static, single-page app when you refresh your browser.
 
 ## Why not Grunt/Gulp/etc
 
