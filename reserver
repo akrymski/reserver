@@ -22,6 +22,7 @@ var http    = require('http');
 var send    = require('send');
 var url     = require('url');
 var async   = require('async');
+var autoprefixer = require('autoprefixer-core');
 
 program
   .version('0.0.1')
@@ -35,12 +36,6 @@ var DIR     = path.join(path.dirname(fs.realpathSync(__filename)));
 var PORT    = program.port || 3000;
 var SRC     = fs.realpathSync(program.args[0]);
 var DEST    = program.args.length > 1 ? fs.realpathSync(program.args[1]) : DIR;
-
-var CONFIG  = {
-  '/html' : DEST + '/index.html',
-  '/css' : DEST + '/index.css',
-  '/js' : DEST + '/index.js'
-}
 
 var LOGGER = ";var __log = console.log;console.log = function() {__log.apply(this, arguments);var xhr = new XMLHttpRequest();xhr.open('POST', '/__log');xhr.send(JSON.stringify([].map.call(arguments,function(v){return v && v.tagName ? v.tagName:v})));};"
 
@@ -65,7 +60,7 @@ var builders = {
       compress: true
     }, function (err, res) {
       if (err) fn(err);
-      else fn(null, res.css);
+      else fn(null, autoprefixer.process(res.css).css);
     });
   },
   styl: function(f, fn) {

@@ -10,7 +10,7 @@ A tiny dev server that rebuilds your static, single-page app when you refresh yo
 - I don't want live-reload refreshing my browser in the background
 - I don't want temporary build/debug files to hang around in my server `/www` directory
 - I want compilation errors displayed in the browser
-- I want my CSS compiled from Less or Stylus
+- I want my CSS compiled from [LESS](http://lesscss.org) or [Stylus](http://learnboost.github.io/stylus/) and [Autoprefixed](https://github.com/postcss/autoprefixer)
 - I want my JavaScript or CoffeeScript browserified
 - I want my app's console.log output to show up in the terminal
 - I want parallel builds in under 100ms
