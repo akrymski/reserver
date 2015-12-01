@@ -37,7 +37,8 @@ index.jade   -> compiled with Jade
 index.hb     -> compiled with Handlebars
 index.coffee -> compiled with coffeeify
 index.js     -> compiled with browserify
-index.jsx    -> compiled with browserify + babel
+index.es6    -> compiled with browserify + babel
+index.jsx    -> compiled with browserify + react presets for babel
 index.html   -> copied
 index.css    -> copied
 ```

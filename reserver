@@ -54,11 +54,18 @@ var builders = {
     }).bundle(fn);
   },
   jsx: function(f, fn) {
-    var babel = require('babelify');
+    var babelify = require('babelify');
     require('browserify')({
       entries: f,
       debug: true
-    }).transform(babel).bundle(fn);
+    }).transform(babelify, {presets: ["es2015", "react"]}).bundle(fn);
+  },
+  es6: function(f, fn) {
+    var babelify = require('babelify');
+    require('browserify')({
+      entries: f,
+      debug: true
+    }).transform(babelify).bundle(fn);
   },
   less: function(f, fn) {
     require('less').render(fs.readFileSync(f).toString(), {
@@ -114,10 +121,11 @@ var builders = {
 
 function build(dir, fn) {
   for (var ext in builders) {
-    var f = SRC + dir + '/index.' + ext;
+    var f = SRC + '/' + dir + '/index.' + ext;
     if (fs.existsSync(f)) return builders[ext].call(this, f, fn);
   }
-  fn('No valid index file found in ' + dir);
+  fn(null, null);
+  //fn('No valid index file found in ' + dir);
 }
 
 var src;
@@ -127,10 +135,10 @@ http.createServer(function(req, res) {
   var time = Date.now();
   var timeString = (new Date()).toTimeString().substring(0,9);
 
-  if (req.url === "/index.js") {
+  if (req.url === "/index.js" && src.js) {
     res.writeHead(200, { "Content-Type": "text/javascript" });
     res.end(LOGGER + src.js);
-  } else if (req.url === "/index.css") {
+  } else if (req.url === "/index.css" && src.css) {
     res.writeHead(200, { "Content-Type": "text/css" });
     res.end(src.css);
   } else if (req.url === "/__log") {
@@ -154,14 +162,14 @@ http.createServer(function(req, res) {
 
     if (req.method === 'GET') {
       res.writeHead(200, { "Content-Type": "text/html" });
-      async.map(['/css', '/js', '/html'], build, function(err, results) {
+      async.map(['css', 'js', 'html'], build, function(err, results) {
         if (err) {
-          console.log(timeString + 'BUILD ERROR: err');
-          return res.end('<html><body><pre>'+err+'</pre></body>');
+          console.log(timeString + 'BUILD ERROR: ' + err);
+          return res.end('<html><body style="background:rgb(132, 47, 47);padding:20px"><pre style="color:#fff;font-size:14px">'+err+'</pre></body>');
         }
         console.log(timeString + 'BUILT IN ' + (Date.now()-time) + 'ms');
         src = { css: results[0], js: results[1], html: results[2] };
-        res.end(src.html);
+        res.end(src.html || fs.readFileSync(DEST + '/index.html').toString());
       });
     }
 
