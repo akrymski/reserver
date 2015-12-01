@@ -5,7 +5,7 @@
  ______ _______ _______ _______  ______ _    _ _______  ______
 |_____/ |______ |______ |______ |_____/  \  /  |______ |_____/
 |    \_ |______ ______| |______ |    \_   \/   |______ |    \_
-                                                              
+
 
 Designed, built, and released under MIT license by @akrymski. Learn more at
 https://github.com/akrymski/reserver
@@ -52,6 +52,13 @@ var builders = {
       entries: f,
       debug: true
     }).bundle(fn);
+  },
+  jsx: function(f, fn) {
+    var babel = require('babelify');
+    require('browserify')({
+      entries: f,
+      debug: true
+    }).transform(babel).bundle(fn);
   },
   less: function(f, fn) {
     require('less').render(fs.readFileSync(f).toString(), {
@@ -139,7 +146,7 @@ http.createServer(function(req, res) {
     res.setHeader('Access-Control-Request-Method', '*');
     res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET');
     res.setHeader('Access-Control-Allow-Headers', '*');
-    
+
     if (req.method === 'OPTIONS') {
       res.writeHead(200);
       return res.end();
@@ -165,4 +172,3 @@ http.createServer(function(req, res) {
 console.log('Building from ' + SRC);
 console.log('Serving static files from ' + DEST);
 console.log('Listening on port ' + PORT);
-

@@ -20,12 +20,12 @@ A tiny dev server that rebuilds your static, single-page app when you refresh yo
 Reserver is a built-tool-by-convention.  Instead of writing config files, it expects your app to have the following structure:
 
 ```
-/html/index.ext -> compiled to /index.html
-/js/index.ext   -> compiled to /index.js
-/css/index.ext  -> compiled to /index.css
+src/html/index.ext -> compiled to //index.html
+src/js/index.ext   -> compiled to //index.js
+src/css/index.ext  -> compiled to //index.css
 ```
 
-Inside each directory there needs to be a file called `index` with it's appropriate _extension_.  Based on the extension, reserver will compile the index file as necessary.  For example if you have `/css/index.less` then `less` will be used to compile your CSS.
+Inside each directory there needs to be a file called `index` with it's appropriate _extension_.  Based on the extension, reserver will compile the index file as necessary.  For example if you have `/css/index.less` then `less` will be used to compile your CSS.  The `index` file is responsible for including any dependencies, for example using `@import` in CSS or `require()` in JavaScript.
 
 Supported extensions are:
 
@@ -37,6 +37,9 @@ index.jade   -> compiled with Jade
 index.hb     -> compiled with Handlebars
 index.coffee -> compiled with coffeeify
 index.js     -> compiled with browserify
+index.jsx    -> compiled with browserify + babel
+index.html   -> copied
+index.css    -> copied
 ```
 
 Your `index.html` should include the compiled JS & CSS as follows:
